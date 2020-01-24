@@ -9,9 +9,9 @@ class movingrange:
     value_series = []
     mR_series = []
 
-    def load_from_pandas(self, df, periodcolumn, valuecolumn):
+    def load_from_pandas(self, df, period_column, value_column):
         import pandas
-        self.load_from_arrays(df[periodcolumn].tolist(), df[valuecolumn].tolist())
+        self.load_from_arrays(df[period_column].tolist(), df[value_column].tolist())
 
     def load_from_arrays(self, period_series, value_series):
         self.period_series = period_series
@@ -25,7 +25,7 @@ class movingrange:
         return sum(self.mR_series) / len(self.mR_series)
         
     # 3.267 is a magic number
-    def moving_range_control_limit(self):
+    def moving_range_limit(self):
         mr_mean = self.moving_range_mean()
         return 3.267 * mr_mean
         
@@ -35,8 +35,7 @@ class movingrange:
     # 2.66 is a magic number
     # it is a statistically derived constant that makes the Natural Process Limits 
     # roughly equivalent to three standard deviations from the Central Line
-    def individuals_control_limits(self):
-        
+    def individuals_limits(self):
         individuals_mean = self.individuals_mean()
         mr_mean = self.moving_range_mean()
         ucl = individuals_mean + 2.66 * mr_mean
@@ -50,44 +49,39 @@ class movingrange:
     def indentify_special_cases(self):
         mr_samples = []
         i_samples = []
-        mr_ucl = self.moving_range_control_limit()
+        mr_ucl = self.moving_range_limit()
         for i in range(len(self.mR_series)):
             if self.mR_series[i] > mr_ucl:
                 mr_samples.append(i)
-        i_lcl, i_ucl = self.individuals_control_limits()
+        i_lcl, i_ucl = self.individuals_limits()
         for i in range(len(self.value_series)):
             if sorted((i_lcl, self.value_series[i], i_ucl))[1] != self.value_series[i]:
                 i_samples.append(i)
         return i_samples, mr_samples
     
-    # At least 3 out of 4 consecutive points closer to the same Natural Process Limit 
-    # than to the Central Line. 
-    def identify_short_run(self, sample_size = 4, sample = 3):
-        print('identify_short_run: not implemented')
-        rolling = [0] * sample_size
+    # Consecutive points the same side of the Central Line. 
+    def identify_run(self, samples = 6):
+        run_samples = []
+        mr_mean = self.moving_range_mean()
+        rolling = [0] * samples
         for i in range(len(self.mR_series)):
-            rolling.append(self.mR_series[i])
+            side = self.mR_series[i] - mr_mean
+            side = side / abs(side)
+            rolling.append(side)
             rolling = rolling[1:]
-        samples = []
-        return samples
+            if abs(sum(rolling)) == samples:
+                for index in range(samples):
+                    run_samples.append(i - index + 1)
+        return list(set(run_samples))
     
-    # At least 8 consecutive points running on one side of the Central Line indicates 
-    # a change. Find out the cause – it might be an initiative you implemented that 
-    # worked, or something else. 
-    # Use the points in the long run to recalculate the Central Line and 
-    # Natural Process Limits.
-    def identify_long_run(self, sample_size = 8):
-        print('identify_long_run: not implemented')
-        return 1
-    
-    def plot(self, title="Control Chart", xlabel="Period", ylabel="mR", file='XmR.svg'):        
+    def plot(self, title="Control Chart", x_label="Period", i_label="Observations", mr_label="mR", file='XmR.svg'):        
         from matplotlib import pyplot as plt
 
         mr_mean = self.moving_range_mean()
         sample_mean = self.individuals_mean()
 
-        mr_ucl = self.moving_range_control_limit()
-        i_ucl, i_lcl = self.individuals_control_limits()
+        mr_ucl = self.moving_range_limit()
+        i_ucl, i_lcl = self.individuals_limits()
 
         plt.figure(figsize=(12, 12))
         plt.title("Title")  
@@ -101,8 +95,8 @@ class movingrange:
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Individuals")  
-        plt.xlabel(xlabel)
-        plt.ylabel("Observation")
+        plt.xlabel(x_label)
+        plt.ylabel(i_label)
         
         # moving range
         ax = plt.subplot(212)
@@ -112,7 +106,7 @@ class movingrange:
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Moving Range")  
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
+        plt.xlabel(x_label)
+        plt.ylabel(mr_label)
 
         plt.savefig(file, format='svg')
