@@ -41,6 +41,19 @@ class movingrange:
         upper = self.moving_range_standard_deviation(3)
         lower = self.moving_range_standard_deviation(-3)
         return  lower, upper
+
+    # puts observations into a bin corresponding to their distance from the mean in standard deviations
+    def moving_range_bins(self):
+        bins = []
+        sigma = self.moving_range_sigma()
+        mean = self.moving_range_mean()
+        for value in range(len(self.mR_series)):
+            distance = (self.mR_series[value] - mean) / sigma
+            distance = -((0 - distance) // 1) # math.floor the value
+            if distance <= 0:
+                distance = distance - 1
+            bins.append(distance)
+        return bins
         
     def moving_range_describe(self):
         mr_mean = self.moving_range_mean()
@@ -61,74 +74,62 @@ class movingrange:
         description = description + ' 3 Sigma = ' + str(self.moving_range_standard_deviation(3)) + '\n'
         print (description)
 
-    def individuals_describe(self):
-        #d2 = 1.128
-        #Upper control limit  = 20.6531760715387
-        #Average moving range = 18.583333333333332
-        #Lower control limit  = 16.513490595127966
-        #Sigma(X) = 0.689947579401789
-        #-3 Sigma = 16.513490595127966
-        #-2 Sigma = 17.203438174529754
-        #-1 Sigma = 17.893385753931543
-        #0 Sigma = 18.583333333333332
-        #1 Sigma = 19.27328091273512
-        #2 Sigma = 19.96322849213691
-        #3 Sigma = 20.6531760715387
-        return 1
-
     def individuals_mean(self):
         return sum(self.value_series) / len(self.value_series)
 
-    # 3 = 2.66
-    # 2 = 1.77
-    # 1 = 1.128
+    def individuals_sigma(self):
+        mr_mean = self.moving_range_mean()
+        sigma = (2.66 * mr_mean) / 3
+        return sigma
 
-    # it is a statistically derived constant that makes the Natural Process Limits 
-    # roughly equivalent to three standard deviations from the Central Line
+    def individuals_standard_deviation(self, number = 1):
+        mean = self.individuals_mean()
+        sigma = self.individuals_sigma()
+        std_dev = mean + (sigma * number)
+        return std_dev
+
     def individuals_limits(self):
-        individuals_mean = self.individuals_mean()
-        mr_mean = self.moving_range_mean()
-        ucl = individuals_mean + 2.66 * mr_mean
-        lcl = individuals_mean - 2.66 * mr_mean
-        if lcl < 0:
-            lcl = 0
-        return lcl, ucl
+        upper = self.individuals_standard_deviation(3)
+        lower = self.individuals_standard_deviation(-3)
+        return  lower, upper
 
-    # A point outside the Natural Process Limits indicates something unusual happened. 
-    # Just find out what it was, don’t try to fix it unless it’s a real problem.
-    def indentify_special_cases(self):
-        mr_samples = []
-        i_samples = []
-        mr_lcl, mr_ucl = self.moving_range_limits()
-        for i in range(len(self.mR_series)):
-            if self.mR_series[i] > mr_ucl:
-                mr_samples.append(i)
-        i_lcl, i_ucl = self.individuals_limits()
-        for i in range(len(self.value_series)):
-            if sorted((i_lcl, self.value_series[i], i_ucl))[1] != self.value_series[i]:
-                i_samples.append(i)
-        return i_samples, mr_samples
-    
-    # Consecutive points the same side of the Central Line. 
-    def identify_run(self, samples = 6):
-        run_samples = []
-        mr_mean = self.moving_range_mean()
-        rolling = [0] * samples
-        for i in range(len(self.mR_series)):
-            side = self.mR_series[i] - mr_mean
-            side = side / abs(side)
-            rolling.append(side)
-            rolling = rolling[1:]
-            if abs(sum(rolling)) == samples:
-                for index in range(samples):
-                    run_samples.append(i - index + 1)
-        return list(set(run_samples))
+    # puts observations into a bin corresponding to their distance from the mean in standard deviations
+    def individuals_bins(self):
+        bins = []
+        sigma = self.individuals_sigma()
+        mean = self.individuals_mean()
+        for value in range(len(self.value_series)):
+            distance = (self.value_series[value] - mean) / sigma
+            distance = -((0 - distance) // 1) # math.floor the value
+            if distance <= 0:
+                distance = distance - 1
+            bins.append(distance)
+        return bins
+
+    def individuals_describe(self):
+        mean = self.individuals_mean()
+        sigma = self.individuals_sigma()
+        limits = self.individuals_limits()
+        description = 'Individuals' + '\n'
+        description = description + '===========' + '\n'
+        description = description + 'Upper control limit = ' + str(limits[1]) + '\n'
+        description = description + 'Moving Range mean = ' + str(mean) + '\n'
+        description = description + 'Lower control limit = ' + str(limits[0]) + '\n'
+        description = description + 'Sigma(mR) = ' + str(sigma) + '\n'
+        description = description + '-3 Sigma = ' + str(self.individuals_standard_deviation(-3)) + '\n'
+        description = description + '-2 Sigma = ' + str(self.individuals_standard_deviation(-2)) + '\n'
+        description = description + '-1 Sigma = ' + str(self.individuals_standard_deviation(-1)) + '\n'
+        description = description + ' 0 Sigma = ' + str(self.individuals_standard_deviation(0)) + '\n'
+        description = description + ' 1 Sigma = ' + str(self.individuals_standard_deviation(1)) + '\n'
+        description = description + ' 2 Sigma = ' + str(self.individuals_standard_deviation(2)) + '\n'
+        description = description + ' 3 Sigma = ' + str(self.individuals_standard_deviation(3)) + '\n'
+        print (description)
+
+    def identify_violations(self):
+        return []
 
     def plot(self, title="Control Chart", x_label="Period", i_label="Observations", mr_label="mR", file=''):        
         from matplotlib import pyplot as plt
-
-        sample_mean = self.individuals_mean()
-        i_ucl, i_lcl = self.individuals_limits()
 
         plt.figure(figsize=(12, 12))
         plt.title("Title")  
@@ -136,9 +137,13 @@ class movingrange:
         # individual
         ax = plt.subplot(211)
         plt.plot(self.period_series, self.value_series, marker='o', markersize=3, color='b')
-        plt.axhline(y=sample_mean, color='g')
-        plt.axhline(y=i_ucl, color='r')
-        plt.axhline(y=i_lcl, color='r')
+        plt.axhline(y=self.individuals_standard_deviation(-3), color='r')
+        plt.axhline(y=self.individuals_standard_deviation(-2), color='r', linestyle=':')
+        plt.axhline(y=self.individuals_standard_deviation(-1), color='r', linestyle=':')
+        plt.axhline(y=self.individuals_standard_deviation( 0), color='g')
+        plt.axhline(y=self.individuals_standard_deviation( 1), color='r', linestyle=':')
+        plt.axhline(y=self.individuals_standard_deviation( 2), color='r', linestyle=':')
+        plt.axhline(y=self.individuals_standard_deviation( 3), color='r')
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Individuals")  
@@ -148,7 +153,6 @@ class movingrange:
         # moving range
         ax = plt.subplot(212)
         plt.plot(self.period_series[:-1], self.mR_series, marker='o', markersize=3, color='b')
-
         plt.axhline(y=self.moving_range_standard_deviation(-3), color='r')
         plt.axhline(y=self.moving_range_standard_deviation(-2), color='r', linestyle=':')
         plt.axhline(y=self.moving_range_standard_deviation(-1), color='r', linestyle=':')
@@ -156,7 +160,6 @@ class movingrange:
         plt.axhline(y=self.moving_range_standard_deviation( 1), color='r', linestyle=':')
         plt.axhline(y=self.moving_range_standard_deviation( 2), color='r', linestyle=':')
         plt.axhline(y=self.moving_range_standard_deviation( 3), color='r')
-
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Moving Range")  
