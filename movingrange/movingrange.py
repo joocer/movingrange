@@ -25,30 +25,41 @@ class movingrange:
         
     def moving_range_sigma(self):
         # mean x 3.267 = mean + 3 x sigma
-        # 3.267 = 1 + (3 x sigma) / mean
-        # 2.267 = (3 x sigma) / mean
-        # mean x 2.267 = 3 x Sigma
-        # sigma = (mean x 2.267) / 3
         mr_mean = self.moving_range_mean()
         sigma = (mr_mean * 2.267) / 3
         return sigma
 
-    def moving_range_limits(self):
-        sigma = self.moving_range_sigma()
+    def moving_range_standard_deviation(self, number = 1):
         mr_mean = self.moving_range_mean()
-        return  mr_mean - (sigma * 3), mr_mean + (sigma * 3)
+        sigma = self.moving_range_sigma()
+        std_dev = mr_mean + (sigma * number)
+        if std_dev < 0:
+            std_dev = 0
+        return std_dev
+
+    def moving_range_limits(self):
+        upper = self.moving_range_standard_deviation(3)
+        lower = self.moving_range_standard_deviation(-3)
+        return  lower, upper
         
     def moving_range_describe(self):
         mr_mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
         limits = self.moving_range_limits()
-        print ("Upper control limit =", limits[1])
-        print ("Moving Range mean =", mr_mean)
-        print ("Lower control limit  =", limits[0])
-        print ("Sigma(mR) =", sigma)
-        print ("1 Sigma =", mr_mean + (sigma * 1))
-        print ("2 Sigma =", mr_mean + (sigma * 2))
-        print ("3 Sigma =", mr_mean + (sigma * 3))
+        description = 'Moving Range' + '\n'
+        description = description + '============' + '\n'
+        description = description + 'Upper control limit = ' + str(limits[1]) + '\n'
+        description = description + 'Moving Range mean = ' + str(mr_mean) + '\n'
+        description = description + 'Lower control limit = ' + str(limits[0]) + '\n'
+        description = description + 'Sigma(mR) = ' + str(sigma) + '\n'
+        description = description + '-3 Sigma = ' + str(self.moving_range_standard_deviation(-3)) + '\n'
+        description = description + '-2 Sigma = ' + str(self.moving_range_standard_deviation(-2)) + '\n'
+        description = description + '-1 Sigma = ' + str(self.moving_range_standard_deviation(-1)) + '\n'
+        description = description + ' 0 Sigma = ' + str(self.moving_range_standard_deviation(0)) + '\n'
+        description = description + ' 1 Sigma = ' + str(self.moving_range_standard_deviation(1)) + '\n'
+        description = description + ' 2 Sigma = ' + str(self.moving_range_standard_deviation(2)) + '\n'
+        description = description + ' 3 Sigma = ' + str(self.moving_range_standard_deviation(3)) + '\n'
+        print (description)
 
     def individuals_describe(self):
         #d2 = 1.128
@@ -113,14 +124,10 @@ class movingrange:
                     run_samples.append(i - index + 1)
         return list(set(run_samples))
 
-    def plot(self, title="Control Chart", x_label="Period", i_label="Observations", mr_label="mR", file='XmR.svg'):        
+    def plot(self, title="Control Chart", x_label="Period", i_label="Observations", mr_label="mR", file=''):        
         from matplotlib import pyplot as plt
 
-        mr_mean = self.moving_range_mean()
         sample_mean = self.individuals_mean()
-        mr_sigma = self.moving_range_sigma()
-
-        mr_lcl, mr_ucl = self.moving_range_limits()
         i_ucl, i_lcl = self.individuals_limits()
 
         plt.figure(figsize=(12, 12))
@@ -141,14 +148,20 @@ class movingrange:
         # moving range
         ax = plt.subplot(212)
         plt.plot(self.period_series[:-1], self.mR_series, marker='o', markersize=3, color='b')
-        plt.axhline(y=mr_mean, color='g')
-        plt.axhline(y=mr_mean + (mr_sigma * 1), color='r', linestyle=':')
-        plt.axhline(y=mr_mean + (mr_sigma * 2), color='r', linestyle=':')
-        plt.axhline(y=mr_mean + (mr_sigma * 3), color='r')
+
+        plt.axhline(y=self.moving_range_standard_deviation(-3), color='r')
+        plt.axhline(y=self.moving_range_standard_deviation(-2), color='r', linestyle=':')
+        plt.axhline(y=self.moving_range_standard_deviation(-1), color='r', linestyle=':')
+        plt.axhline(y=self.moving_range_standard_deviation( 0), color='g')
+        plt.axhline(y=self.moving_range_standard_deviation( 1), color='r', linestyle=':')
+        plt.axhline(y=self.moving_range_standard_deviation( 2), color='r', linestyle=':')
+        plt.axhline(y=self.moving_range_standard_deviation( 3), color='r')
+
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Moving Range")  
         plt.xlabel(x_label)
         plt.ylabel(mr_label)
 
-        plt.savefig(file, format='svg')
+        if (len(file) > 0):
+            plt.savefig(file, format='svg')
