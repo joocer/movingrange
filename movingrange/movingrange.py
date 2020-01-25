@@ -45,16 +45,25 @@ class movingrange:
     # puts observations into a bin corresponding to their distance from the mean in standard deviations
     def moving_range_bins(self):
         bins = []
-        sigma = self.moving_range_sigma()
         mean = self.moving_range_mean()
+        sigma = self.moving_range_sigma()
         for value in range(len(self.mR_series)):
             distance = (self.mR_series[value] - mean) / sigma
-            distance = -((0 - distance) // 1) # math.floor the value
+            distance = -((0 - distance) // 1) # math.floor the value without math
             if distance <= 0:
                 distance = distance - 1
             bins.append(distance)
         return bins
-        
+
+    def moving_range_sides(self):
+        sides = []
+        mean = self.moving_range_mean()
+        for i in range(len(self.mR_series)):
+            side = self.mR_series[i] - mean
+            side = side / abs(side)
+            sides.append(side)
+        return sides
+
     def moving_range_describe(self):
         mr_mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
@@ -96,15 +105,24 @@ class movingrange:
     # puts observations into a bin corresponding to their distance from the mean in standard deviations
     def individuals_bins(self):
         bins = []
-        sigma = self.individuals_sigma()
         mean = self.individuals_mean()
+        sigma = self.individuals_sigma()
         for value in range(len(self.value_series)):
             distance = (self.value_series[value] - mean) / sigma
-            distance = -((0 - distance) // 1) # math.floor the value
+            distance = -((0 - distance) // 1) # math.floor the value without math
             if distance <= 0:
                 distance = distance - 1
             bins.append(distance)
         return bins
+
+    def individuals_sides(self):
+        sides = []
+        mean = self.individuals_mean()
+        for i in range(len(self.value_series)):
+            side = self.value_series[i] - mean
+            side = side / abs(side)
+            sides.append(side)
+        return sides
 
     def individuals_describe(self):
         mean = self.individuals_mean()
