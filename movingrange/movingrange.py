@@ -42,36 +42,37 @@ class movingrange:
         lower = self.moving_range_standard_deviation(-3)
         return  lower, upper
 
-    # puts observations into a bin corresponding to their distance from the mean in standard deviations
+    # puts mRs into a bin corresponding to their displacement from the mean in standard deviations
     def moving_range_bins(self):
         bins = []
         mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
         for value in range(len(self.mR_series)):
-            distance = (self.mR_series[value] - mean) / sigma
-            distance = -((0 - distance) // 1) # math.floor the value without math
-            if distance <= 0:
-                distance = distance - 1
-            bins.append(distance)
+            displacement = (self.mR_series[value] - mean) / sigma
+            displacement = -((0 - displacement) // 1) # math.floor the value without math
+            if displacement <= 0:
+                displacement = displacement - 1
+            bins.append(displacement)
         return bins
 
+    # returns an array with items of 1 or -1 depending on if the value is more or less than the mean
     def moving_range_sides(self):
         sides = []
         mean = self.moving_range_mean()
         for i in range(len(self.mR_series)):
-            side = self.mR_series[i] - mean
-            side = side / abs(side)
+            displacement = self.mR_series[i] - mean
+            side = displacement / abs(displacement)
             sides.append(side)
         return sides
 
     def moving_range_describe(self):
-        mr_mean = self.moving_range_mean()
+        mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
         limits = self.moving_range_limits()
         description = 'Moving Range' + '\n'
         description = description + '============' + '\n'
         description = description + 'Upper control limit = ' + str(limits[1]) + '\n'
-        description = description + 'Moving Range mean = ' + str(mr_mean) + '\n'
+        description = description + 'Moving Range mean = ' + str(mean) + '\n'
         description = description + 'Lower control limit = ' + str(limits[0]) + '\n'
         description = description + 'Sigma(mR) = ' + str(sigma) + '\n'
         description = description + '-3 Sigma = ' + str(self.moving_range_standard_deviation(-3)) + '\n'
@@ -102,25 +103,26 @@ class movingrange:
         lower = self.individuals_standard_deviation(-3)
         return  lower, upper
 
-    # puts observations into a bin corresponding to their distance from the mean in standard deviations
+    # puts observations into a bin corresponding to their displacement from the mean in standard deviations
     def individuals_bins(self):
         bins = []
         mean = self.individuals_mean()
         sigma = self.individuals_sigma()
         for value in range(len(self.value_series)):
-            distance = (self.value_series[value] - mean) / sigma
-            distance = -((0 - distance) // 1) # math.floor the value without math
-            if distance <= 0:
-                distance = distance - 1
-            bins.append(distance)
+            displacement = (self.value_series[value] - mean) / sigma
+            displacement = -((0 - displacement) // 1) # math.floor the value without math
+            if displacement <= 0:
+                displacement = displacement - 1
+            bins.append(displacement)
         return bins
 
+    # returns an array with items of 1 or -1 depending on if the value is more or less than the mean
     def individuals_sides(self):
         sides = []
         mean = self.individuals_mean()
         for i in range(len(self.value_series)):
-            side = self.value_series[i] - mean
-            side = side / abs(side)
+            displacement = self.value_series[i] - mean
+            side = displacement / abs(displacement)
             sides.append(side)
         return sides
 
