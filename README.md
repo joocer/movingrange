@@ -1,3 +1,3 @@
 # movingrange
 
-Python library to create Statistical Control Charts (Shewhart Charts).
+A Python library to calculate Statistical Control Charts (Shewhart Charts).

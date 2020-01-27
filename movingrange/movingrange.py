@@ -65,6 +65,18 @@ class movingrange:
             sides.append(side)
         return sides
 
+    # returns an array with items of 1 (increase), 0 (stable) or -1 (reduction)
+    def moving_range_direction(self):
+        directions = []
+        for i in range(len(self.mR_series) - 1):
+            delta = self.mR_series[i + 1] - self.mR_series[i]
+            if delta == 0:
+                direction = 0
+            else:
+                direction = delta / abs(delta)
+            directions.append(direction)
+        return directions
+
     def moving_range_describe(self):
         mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
@@ -125,6 +137,18 @@ class movingrange:
             side = displacement / abs(displacement)
             sides.append(side)
         return sides
+
+    # returns an array with items of 1 (increase), 0 (stable) or -1 (reduction)
+    def individuals_direction(self):
+        directions = []
+        for i in range(len(self.value_series) - 1):
+            delta = self.value_series[i + 1] - self.value_series[i]
+            if delta == 0:
+                direction = 0
+            else:
+                direction = delta / abs(delta)
+            directions.append(direction)
+        return directions
 
     def individuals_describe(self):
         mean = self.individuals_mean()
