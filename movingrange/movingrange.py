@@ -1,3 +1,5 @@
+import rulesets
+
 class movingrange: 
     # https://en.wikipedia.org/wiki/Shewhart_individuals_control_chart
     
@@ -7,6 +9,7 @@ class movingrange:
     period_series = []
     value_series = []
     mR_series = []
+    rules = None
 
     def load_from_pandas(self, df, period_column, value_column):
         import pandas
@@ -19,6 +22,7 @@ class movingrange:
         for i in range(len(value_series) - 1):
             mR = abs(value_series[i] - value_series[i + 1])
             self.mR_series.append(mR)
+        self.rules = rulesets.rulesets(self)
 
     def moving_range_mean(self):
         return sum(self.mR_series) / len(self.mR_series)
