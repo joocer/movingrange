@@ -3,9 +3,6 @@ import rulesets
 class movingrange: 
     # https://en.wikipedia.org/wiki/Shewhart_individuals_control_chart
     
-    # some code comments taken from: 
-    # https://www.staceybarr.com/measure-up/build-xmr-chart-kpi/
-    
     period_series = []
     value_series = []
     mR_series = []
@@ -138,7 +135,10 @@ class movingrange:
         mean = self.individuals_mean()
         for i in range(len(self.value_series)):
             displacement = self.value_series[i] - mean
-            side = displacement / abs(displacement)
+            if displacement == 0:
+                side = 0
+            else:
+                side = displacement / abs(displacement)
             sides.append(side)
         return sides
 
