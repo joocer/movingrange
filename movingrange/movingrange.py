@@ -68,6 +68,18 @@ class movingrange:
 
         print (description)
 
+    def individuals_bins(self):
+        bins = []
+        for segment in self.segments:
+            bins = bins + segment.individuals_bins()
+        return bins
+
+    def individuals_direction(self):
+        directions = []
+        for segment in self.segments:
+            directions = directions + segment.individuals_direction()
+        return directions
+
     def plot(self, title="Control Chart", x_label="Period", i_label="Observations", mr_label="mR", file=''):        
         from matplotlib import pyplot as plt
 

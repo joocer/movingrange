@@ -24,11 +24,6 @@ class segment:
             std_dev = 0
         return std_dev
 
-    def moving_range_limits(self):
-        upper = self.moving_range_standard_deviation(3)
-        lower = self.moving_range_standard_deviation(-3)
-        return  lower, upper
-
     # puts mRs into a bin corresponding to their displacement from the mean in standard deviations
     def moving_range_bins(self):
         bins = []
@@ -41,16 +36,6 @@ class segment:
                 displacement = displacement - 1
             bins.append(displacement)
         return bins
-
-    # returns an array with items of 1 or -1 depending on if the value is more or less than the mean
-    def moving_range_sides(self):
-        sides = []
-        mean = self.moving_range_mean()
-        for i in range(len(self.mR_series)):
-            displacement = self.mR_series[i] - mean
-            side = displacement / abs(displacement)
-            sides.append(side)
-        return sides
 
     # returns an array with items of 1 (increase), 0 (stable) or -1 (reduction)
     def moving_range_direction(self):
@@ -101,11 +86,6 @@ class segment:
         std_dev = mean + (sigma * number)
         return std_dev
 
-    def individuals_limits(self):
-        upper = self.individuals_standard_deviation(3)
-        lower = self.individuals_standard_deviation(-3)
-        return  lower, upper
-
     # puts observations into a bin corresponding to their displacement from the mean in standard deviations
     def individuals_bins(self):
         bins = []
@@ -118,19 +98,6 @@ class segment:
                 displacement = displacement - 1
             bins.append(displacement)
         return bins
-
-    # returns an array with items of 1 or -1 depending on if the value is more or less than the mean
-    def individuals_sides(self):
-        sides = []
-        mean = self.individuals_mean()
-        for i in range(len(self.value_series)):
-            displacement = self.value_series[i] - mean
-            if displacement == 0:
-                side = 0
-            else:
-                side = displacement / abs(displacement)
-            sides.append(side)
-        return sides
 
     # returns an array with items of 1 (increase), 0 (stable) or -1 (reduction)
     def individuals_direction(self):
