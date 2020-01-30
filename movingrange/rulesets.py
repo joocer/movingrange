@@ -122,9 +122,8 @@ class rulesets:
         return violations
 
 # test should result in a boolean
-# method tests runs of length sample size return true for the test
-# some rules are "four out of five", an optional ratio parameter
-# accounts for this
+# method tests runs of length sample size return true for the test some rules are 
+# "four out of five", an optional ratio parameter allows for this
 def execute_run_test(samples, sample_size, test, ratio = 1):
     results = []
     rolling = [0] * sample_size
