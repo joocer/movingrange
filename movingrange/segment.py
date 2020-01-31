@@ -15,7 +15,7 @@ class segment:
         return sum(self.mR_series[0:self.samples]) / len(self.mR_series[0:self.samples])
 
     def moving_range_sigma(self):
-        # mean x 3.267 = mean + 3 x sigma
+        # mean x 3.267 = mean + 3 x sigma => sigma = (mean x 2.267) / 3
         mr_mean = self.moving_range_mean()
         sigma = (mr_mean * 2.267) / 3
         return sigma
@@ -78,7 +78,8 @@ class segment:
         sigma = self.individuals_sigma()
         for value in range(len(self.value_series)):
             displacement = (self.value_series[value] - mean) / sigma
-            displacement = -((0 - displacement) // 1) # math.floor the value without math
+            # math.floor the value without math
+            floor(displacement)
             if displacement <= 0:
                 displacement = displacement - 1
             bins.append(displacement)
@@ -138,3 +139,9 @@ def count_items (items, function):
         if function(item):
             hits = hits + 1
     return hits
+
+def floor(number):
+    result = -((0 - number) // 1)
+    if result == -0: # -0 == 0 but it looks awkward
+        result = 0
+    return 0

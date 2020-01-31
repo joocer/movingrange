@@ -24,14 +24,14 @@ class movingrange:
             mR = abs(self.value_series[i] - self.value_series[i + 1])
             self.mR_series.append(mR)
 
-    # when 8 samples fall the same side of the mean, recalculate the 
+    # when <baseline_sample_size> samples fall the same side of the mean, recalculate the 
     # mean and standard deviations
     def segment_data(self):
         # not big enough to have more than one segment
         if (len(self.value_series) < (2 * self.baseline_sample_size)):
             pass
 
-        # samples of 0 (or less) mean don't segment the data
+        # <baseline_sample_size> of 0 (or less) mean don't segment the data
         if self.baseline_sample_size < 1:
             self.baseline_sample_size = len(self.value_series)
 
