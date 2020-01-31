@@ -61,7 +61,7 @@ class movingrange:
         description = 'Population' + '\n'
         description = description + '===========' + '\n'
         description = description + 'Number of Samples = ' + str(len(self.value_series)) + '\n'
-        description = description + 'Population Mean = ' + str(calculate_mean(self.value_series)) + '\n'
+        description = description + 'Population Mean = ' + '{:.3f}'.format(calculate_mean(self.value_series)) + '\n'
         description = description + 'Population Maximum = ' + str(max(self.value_series)) + '\n'
         description = description + 'Population Minimum = ' + str(min(self.value_series)) + '\n'
         description = description + 'Number of Segments = ' + str(len(self.segments)) + '\n'
@@ -80,7 +80,7 @@ class movingrange:
             directions = directions + segment.individuals_direction()
         return directions
 
-    def plot(self, title="Control Chart", x_label="Period", i_label="Observations", mr_label="mR", file=''):        
+    def plot(self, title="Process Behavior Chart", x_label="Period", i_label="X", mr_label="mR", file='', show_SD = False):        
         from matplotlib import pyplot as plt
 
         plt.figure(figsize=(12, 12))
@@ -106,13 +106,15 @@ class movingrange:
         ax = plt.subplot(211)
         plt.plot(self.period_series, self.value_series, marker='o', markersize=3, color='b')
 
-        plt.plot(self.period_series, sigma_m3, color='r')
-        plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_0, color='g')
-        plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_3, color='r')
+        plt.plot(self.period_series, sigma_m3, color='r', linestyle='--')
+        plt.plot(self.period_series, sigma_0, color='g', linestyle='--')
+        plt.plot(self.period_series, sigma_3, color='r', linestyle='--')
+
+        if show_SD:
+            plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
+            plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
+            plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
+            plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
 
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -143,13 +145,16 @@ class movingrange:
         ax = plt.subplot(212)
 
         plt.plot(self.period_series[:-1], mr[:-1], marker='o', markersize=3, color='b')
-        plt.plot(self.period_series, sigma_m3, color='r')
-        plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_0, color='g')
-        plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
-        plt.plot(self.period_series, sigma_3, color='r')
+        plt.plot(self.period_series, sigma_m3, color='r', linestyle='--')
+        plt.plot(self.period_series, sigma_0, color='g', linestyle='--')
+        plt.plot(self.period_series, sigma_3, color='r', linestyle='--')
+
+        if show_SD:
+            plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
+            plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
+            plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
+            plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
+        
 
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)

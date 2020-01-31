@@ -3,6 +3,8 @@ class segment:
     def __init__(self, movingrange, segment_start, segment_end, samples = 8):
         self.mR_series = []
         self.samples = samples
+        self.start = segment_start
+        self.end = segment_end
         self.value_series = movingrange.value_series[segment_start:segment_end]
         for i in range(len(self.value_series) - 1):
             mR = abs(self.value_series[i] - self.value_series[i + 1])
@@ -98,17 +100,26 @@ class segment:
         sigma = self.individuals_sigma()
         description = 'Segment' + '\n'
         description = description + '===========' + '\n'
-        # samples
-        description = description + 'Segment Mean = ' + str(mean) + '\n'
-        # range min, range max 
-        description = description + 'Sigma(mR) = ' + str(sigma) + '\n'
-        description = description + '-3 Sigma = ' + str(self.individuals_standard_deviation(-3)) + '\n'
-        description = description + '-2 Sigma = ' + str(self.individuals_standard_deviation(-2)) + '\n'
-        description = description + '-1 Sigma = ' + str(self.individuals_standard_deviation(-1)) + '\n'
-        description = description + ' 0 Sigma = ' + str(self.individuals_standard_deviation(0)) + '\n'
-        description = description + ' 1 Sigma = ' + str(self.individuals_standard_deviation(1)) + '\n'
-        description = description + ' 2 Sigma = ' + str(self.individuals_standard_deviation(2)) + '\n'
-        description = description + ' 3 Sigma = ' + str(self.individuals_standard_deviation(3)) + '\n'
+        description = description + 'Number of Samples = ' + str(len(self.value_series)) + '\n'
+        description = description + 'Start Position = ' + str(self.start) + '\n'
+        description = description + 'End Position = ' + str(self.end) + '\n'
+        description = description + 'Segment Minimum = ' + str(min(self.value_series)) + '\n'
+        description = description + 'Segment Maximum = ' + str(max(self.value_series)) + '\n'
+        description = description + 'Average Change = ' + '{:.3f}'.format(sum(self.mR_series) / len(self.mR_series)) + '\n'
+        description = description + 'Segment Mean = ' + '{:.3f}'.format(mean) + '\n'
+        # count items above the mean
+        # count items below the mean 
+        # longest run of increase
+        # longest run of decrease
+        # items in each of the sigma bins
+        description = description + 'Sigma(X) = ' + '{:.3f}'.format(sigma) + '\n'
+        description = description + ' 3 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(3)) + '\n'
+        description = description + ' 2 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(2)) + '\n'
+        description = description + ' 1 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(1)) + '\n'
+        description = description + ' 0 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(0)) + '\n'
+        description = description + '-1 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-1)) + '\n'
+        description = description + '-2 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-2)) + '\n'
+        description = description + '-3 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-3)) + '\n'
         print (description)
 
     def individuals_sigma_line(self, number = 1):
