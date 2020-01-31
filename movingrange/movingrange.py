@@ -53,7 +53,7 @@ class movingrange:
         segments = []
         for boundary in boundaries:
             start, end = boundary
-            segments.append(segment(self, start, end))
+            segments.append(segment(self, start, end, self.baseline_sample_size))
 
         return segments
 
