@@ -90,82 +90,59 @@ class movingrange:
             directions = directions + segment.individuals_direction()
         return directions
 
+    def individuals_sigma_line(self, number):
+        sigma_line = []
+        for segment in self.segments:
+            sigma_line = sigma_line + segment.individuals_sigma_line(number)
+        return sigma_line
+
+    def moving_range_sigma_line(self, number):
+        sigma_line = []
+        for segment in self.segments:
+            sigma_line = sigma_line + segment.moving_range_sigma_line(number)
+        return sigma_line
+
     def plot(self, title="Process Behavior Chart", x_label="Period", i_label="X", mr_label="mR", file='', show_SD = False):        
         from matplotlib import pyplot as plt
 
         plt.figure(figsize=(12, 12))
         plt.title("Title")  
-        
-        sigma_m3 = []
-        sigma_m2 = []
-        sigma_m1 = []
-        sigma_0 = []
-        sigma_1 = []
-        sigma_2 = []
-        sigma_3 = []
-        for segment in self.segments:
-            sigma_m3 = sigma_m3 + segment.individuals_sigma_line(-3)
-            sigma_m2 = sigma_m2 + segment.individuals_sigma_line(-2)
-            sigma_m1 = sigma_m1 + segment.individuals_sigma_line(-1)
-            sigma_0 = sigma_0 + segment.individuals_sigma_line(0)
-            sigma_1 = sigma_1 + segment.individuals_sigma_line(1)
-            sigma_2 = sigma_2 + segment.individuals_sigma_line(2)
-            sigma_3 = sigma_3 + segment.individuals_sigma_line(3)
 
-        # individual
+        # individuals
         ax = plt.subplot(211)
         plt.plot(self.period_series, self.value_series, marker='o', markersize=3, color='b')
 
-        plt.plot(self.period_series, sigma_m3, color='r', linestyle='--')
-        plt.plot(self.period_series, sigma_0, color='g', linestyle='--')
-        plt.plot(self.period_series, sigma_3, color='r', linestyle='--')
+        plt.plot(self.period_series, self.individuals_sigma_line(3), color='r', linestyle='--')
+        plt.plot(self.period_series, self.individuals_sigma_line(0), color='g', linestyle='--')
+        plt.plot(self.period_series, self.individuals_sigma_line(-3), color='r', linestyle='--')
 
         # include the SD lines on the plot
         if show_SD:
-            plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
-            plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
-            plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
-            plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
+            plt.plot(self.period_series, self.individuals_sigma_line(2), color='r', linestyle=':')
+            plt.plot(self.period_series, self.individuals_sigma_line(1), color='r', linestyle=':')
+            plt.plot(self.period_series, self.individuals_sigma_line(-1), color='r', linestyle=':')
+            plt.plot(self.period_series, self.individuals_sigma_line(-2), color='r', linestyle=':')
 
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Individuals")  
         plt.xlabel(x_label)
         plt.ylabel(i_label)
-        
-        sigma_m3 = []
-        sigma_m2 = []
-        sigma_m1 = []
-        sigma_0 = []
-        sigma_1 = []
-        sigma_2 = []
-        sigma_3 = []
-        mr = []
-        for segment in self.segments:
-            sigma_m3 = sigma_m3 + segment.moving_range_sigma_line(-3)
-            sigma_m2 = sigma_m2 + segment.moving_range_sigma_line(-2)
-            sigma_m1 = sigma_m1 + segment.moving_range_sigma_line(-1)
-            sigma_0 = sigma_0 + segment.moving_range_sigma_line(0)
-            sigma_1 = sigma_1 + segment.moving_range_sigma_line(1)
-            sigma_2 = sigma_2 + segment.moving_range_sigma_line(2)
-            sigma_3 = sigma_3 + segment.moving_range_sigma_line(3)
-            mr = mr + segment.mR_series
-            mr.append(segment.mR_series[-1])
 
         # moving range
         ax = plt.subplot(212)
 
         plt.plot(self.period_series[:-1], self.mR_series, marker='o', markersize=3, color='b')
-        plt.plot(self.period_series, sigma_m3, color='r', linestyle='--')
-        plt.plot(self.period_series, sigma_0, color='g', linestyle='--')
-        plt.plot(self.period_series, sigma_3, color='r', linestyle='--')
+        plt.plot(self.period_series, self.moving_range_sigma_line(3), color='r', linestyle='--')
+        plt.plot(self.period_series, self.moving_range_sigma_line(0), color='g', linestyle='--')
+        plt.plot(self.period_series, self.moving_range_sigma_line(-3), color='r', linestyle='--')
 
         # include the SD lines on the plot
         if show_SD:
-            plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
-            plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
-            plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
-            plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
+            plt.plot(self.period_series, self.moving_range_sigma_line(2), color='r', linestyle=':')
+            plt.plot(self.period_series, self.moving_range_sigma_line(1), color='r', linestyle=':')
+            plt.plot(self.period_series, self.moving_range_sigma_line(-1), color='r', linestyle=':')
+            plt.plot(self.period_series, self.moving_range_sigma_line(-2), color='r', linestyle=':')
         
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
