@@ -8,6 +8,7 @@ class movingrange:
         self.period_series = []
         self.value_series = []
         self.segments = []
+        self.mR_series = []
         self.rules = rulesets(self)
         self.baseline_sample_size = baseline_sample_size
 
@@ -19,6 +20,9 @@ class movingrange:
         self.period_series = period_series
         self.value_series = value_series
         self.segments = self.segment_data()
+        for i in range(len(self.value_series) - 1):
+            mR = abs(self.value_series[i] - self.value_series[i + 1])
+            self.mR_series.append(mR)
 
     # when 8 samples fall the same side of the mean, recalculate the 
     # mean and standard deviations
@@ -26,6 +30,10 @@ class movingrange:
         # not big enough to have more than one segment
         if (len(self.value_series) < (2 * self.baseline_sample_size)):
             pass
+
+        # samples of 0 (or less) mean don't segment the data
+        if self.baseline_sample_size < 1:
+            self.baseline_sample_size = len(self.value_series)
 
         boundaries = []
         last_boundary = 0
@@ -50,30 +58,32 @@ class movingrange:
         # add everything else to the last segment
         boundaries.append((last_boundary, len(self.value_series)))
 
+        # create segments out of the boundaries
         segments = []
         for boundary in boundaries:
             start, end = boundary
             segments.append(segment(self, start, end, self.baseline_sample_size))
-
         return segments
 
+    # summary information
     def describe(self):
         description = 'Population' + '\n'
-        description = description + '===========' + '\n'
+        description = description + '======================' + '\n'
         description = description + 'Number of Samples = ' + str(len(self.value_series)) + '\n'
         description = description + 'Population Mean = ' + '{:.3f}'.format(calculate_mean(self.value_series)) + '\n'
         description = description + 'Population Maximum = ' + str(max(self.value_series)) + '\n'
         description = description + 'Population Minimum = ' + str(min(self.value_series)) + '\n'
         description = description + 'Number of Segments = ' + str(len(self.segments)) + '\n'
-
         print (description)
 
+    # collate the bin information from each of the segments
     def individuals_bins(self):
         bins = []
         for segment in self.segments:
             bins = bins + segment.individuals_bins()
         return bins
 
+    # collate the direction information from the segments
     def individuals_direction(self):
         directions = []
         for segment in self.segments:
@@ -110,6 +120,7 @@ class movingrange:
         plt.plot(self.period_series, sigma_0, color='g', linestyle='--')
         plt.plot(self.period_series, sigma_3, color='r', linestyle='--')
 
+        # include the SD lines on the plot
         if show_SD:
             plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
             plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
@@ -144,24 +155,25 @@ class movingrange:
         # moving range
         ax = plt.subplot(212)
 
-        plt.plot(self.period_series[:-1], mr[:-1], marker='o', markersize=3, color='b')
+        plt.plot(self.period_series[:-1], self.mR_series, marker='o', markersize=3, color='b')
         plt.plot(self.period_series, sigma_m3, color='r', linestyle='--')
         plt.plot(self.period_series, sigma_0, color='g', linestyle='--')
         plt.plot(self.period_series, sigma_3, color='r', linestyle='--')
 
+        # include the SD lines on the plot
         if show_SD:
             plt.plot(self.period_series, sigma_m2, color='r', linestyle=':')
             plt.plot(self.period_series, sigma_m1, color='r', linestyle=':')
             plt.plot(self.period_series, sigma_1, color='r', linestyle=':')
             plt.plot(self.period_series, sigma_2, color='r', linestyle=':')
         
-
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.title("Moving Range")  
         plt.xlabel(x_label)
         plt.ylabel(mr_label)
 
+        # save the plot to a file
         if (len(file) > 0):
             plt.savefig(file, format='svg')
 

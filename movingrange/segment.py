@@ -5,6 +5,7 @@ class segment:
         self.samples = samples
         self.start = segment_start
         self.end = segment_end
+        self.mr = movingrange
         self.value_series = movingrange.value_series[segment_start:segment_end]
         for i in range(len(self.value_series) - 1):
             mR = abs(self.value_series[i] - self.value_series[i + 1])
@@ -98,30 +99,42 @@ class segment:
     def describe(self):
         mean = self.individuals_mean()
         sigma = self.individuals_sigma()
+        bins = self.individuals_bins()
+
         description = 'Segment' + '\n'
-        description = description + '===========' + '\n'
+        description = description + '======================' + '\n'
         description = description + 'Number of Samples = ' + str(len(self.value_series)) + '\n'
         description = description + 'Start Position = ' + str(self.start) + '\n'
         description = description + 'End Position = ' + str(self.end) + '\n'
         description = description + 'Segment Minimum = ' + str(min(self.value_series)) + '\n'
         description = description + 'Segment Maximum = ' + str(max(self.value_series)) + '\n'
-        description = description + 'Average Change = ' + '{:.3f}'.format(sum(self.mR_series) / len(self.mR_series)) + '\n'
+        description = description + '----------------------' + '\n'
         description = description + 'Segment Mean = ' + '{:.3f}'.format(mean) + '\n'
-        # count items above the mean
-        # count items below the mean 
+        description = description + 'Items Above Mean = ' + str(count_items(bins, lambda t: t > 0)) + '\n'
+        description = description + 'Items Below Mean = ' + str(count_items(bins, lambda t: t < 0)) + '\n'
+        description = description + 'Average Change = ' + '{:.3f}'.format(sum(self.mR_series) / len(self.mR_series)) + '\n'
         # longest run of increase
         # longest run of decrease
-        # items in each of the sigma bins
+        description = description + '----------------------' + '\n'
         description = description + 'Sigma(X) = ' + '{:.3f}'.format(sigma) + '\n'
-        description = description + ' 3 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(3)) + '\n'
-        description = description + ' 2 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(2)) + '\n'
-        description = description + ' 1 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(1)) + '\n'
-        description = description + ' 0 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(0)) + '\n'
-        description = description + '-1 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-1)) + '\n'
-        description = description + '-2 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-2)) + '\n'
-        description = description + '-3 Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-3)) + '\n'
+        description = description + ' 3+ Sigma = (' + str(count_items(bins, lambda t: t > 3)) + ' items)\n'
+        description = description + ' 3  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(3)) + ' (' + str(count_items(bins, lambda t: t == 3)) + ' items)\n'
+        description = description + ' 2  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(2)) + ' (' + str(count_items(bins, lambda t: t == 2)) + ' items)\n'
+        description = description + ' 1  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(1)) + ' (' + str(count_items(bins, lambda t: t == 1)) + ' items)\n'
+        description = description + ' 0  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(0)) + '\n'
+        description = description + '-1  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-1)) + ' (' + str(count_items(bins, lambda t: t == -1)) + ' items)\n'
+        description = description + '-2  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-2)) + ' (' + str(count_items(bins, lambda t: t == -2)) + ' items)\n'
+        description = description + '-3  Sigma = ' + '{:.3f}'.format(self.individuals_standard_deviation(-3)) + ' (' + str(count_items(bins, lambda t: t == -3)) + ' items)\n'
+        description = description + '-3+ Sigma = (' + str(count_items(bins, lambda t: t < -3)) + ' items)\n'
         print (description)
 
     def individuals_sigma_line(self, number = 1):
         value = self.individuals_standard_deviation(number)
         return [value] * len(self.value_series)
+
+def count_items (items, function):
+    hits = 0
+    for item in items:
+        if function(item):
+            hits = hits + 1
+    return hits
