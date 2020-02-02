@@ -17,6 +17,7 @@ class movingrange:
         self.load_from_arrays(df[period_column].tolist(), df[value_column].tolist())
 
     def load_from_arrays(self, period_series, value_series):
+        self.mR_series = []
         self.period_series = period_series
         self.value_series = value_series
         self.segments = self.segment_data()
@@ -155,4 +156,4 @@ class movingrange:
             plt.savefig(file, format='svg')
 
 def calculate_mean(series):
-        return sum(series) / len(series)
+    return sum(series) / len(series)

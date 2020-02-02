@@ -43,7 +43,7 @@ class rulesets:
             rolling = rolling[1:]
             if sum(rolling) == 14:
                 for index in range(14):
-                    rule4.append(sample - index + 1)
+                    rule4.append(sample - index)
         violations['Rule 4'] = sorted(list(set(rule4)))
         
         # Rule 5
@@ -132,5 +132,5 @@ def execute_run_test(samples, sample_size, test, ratio = 1):
         rolling = rolling[1:]
         if sum(rolling) >= (sample_size * ratio):
             for index in range(sample_size):
-                results.append(sample - index + 1)
+                results.append(sample - index)
     return sorted(list(set(results)))

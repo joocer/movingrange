@@ -34,11 +34,8 @@ class segment:
         mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
         for value in range(len(self.mR_series)):
-            displacement = (self.mR_series[value] - mean) / sigma
-            displacement = -((0 - displacement) // 1) # math.floor the value without math
-            if displacement <= 0:
-                displacement = displacement - 1
-            bins.append(displacement)
+            bin = binner((self.mR_series[value] - mean) / sigma)
+            bins.append(bin)
         return bins
 
     # returns an array with items of 1 (increase), 0 (stable) or -1 (reduction)
@@ -77,12 +74,8 @@ class segment:
         mean = self.individuals_mean()
         sigma = self.individuals_sigma()
         for value in range(len(self.value_series)):
-            displacement = (self.value_series[value] - mean) / sigma
-            # math.floor the value without math
-            floor(displacement)
-            if displacement <= 0:
-                displacement = displacement - 1
-            bins.append(displacement)
+            bin = binner((self.value_series[value] - mean) / sigma)
+            bins.append(bin)
         return bins
 
     # returns an array with items of 1 (increase), 0 (stable) or -1 (reduction)
@@ -140,8 +133,8 @@ def count_items (items, function):
             hits = hits + 1
     return hits
 
-def floor(number):
-    result = -((0 - number) // 1)
-    if result == -0: # -0 == 0 but it looks awkward
-        result = 0
-    return 0
+def binner(number):
+    result = number // 1
+    if result >= 0:
+        result = result + 1
+    return result
