@@ -2,3 +2,4 @@ examples/XmR.svg
 examples/.ipynb_checkpoints/*
 tests/.ipynb_checkpoints/*
 *.pyc
+*.txt
