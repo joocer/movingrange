@@ -1,6 +1,19 @@
 # timeseries
 
-A Python library to handle time series data.
+A Python library for the interpretation and treatment of time-series data.
+
+## What is it?
+
+## Main Features
+
+### Seasonal Adjustment
+~~~~
+decompose(series)
+rolling_average(series, period)
+Henderson(series, n)
+~~~~
+
+### Control Charts
 
 ### Helper Methods
 ~~~~
@@ -11,11 +24,7 @@ variance(series)
 matches(series, rule)
 ~~~~
 
-### Seasonal Adjustment
-~~~~
-decompose(series)
-rolling_average(series, period)
-Henderson(series, n)
-~~~~
+## Dependencies
 
-### Control Chart
+- matplotlib
+- numpy

@@ -41,19 +41,21 @@ def cycle_periods(series):
         peaks.remove(1)
     return peaks
 
-def seasonal_pattern(series, window):
+# identify cyclic pattern of series data for period
+def seasonal_pattern(series, period):
     pattern = []
     series_mean = mean(series)
-    cycle_sum = [0] * window
-    cycle_count = [0] * window
+    cycle_sum = [0] * period
+    cycle_count = [0] * period
     for i in range(len(series)):
-        cycle_sum[i % window] = cycle_sum[i % window] + series[i]
-        cycle_count[i % window] = cycle_count[i % window] + 1
-    for i in range(window):
+        cycle_sum[i % period] = cycle_sum[i % period] + series[i]
+        cycle_count[i % period] = cycle_count[i % period] + 1
+    for i in range(period):
         cycle_mean = cycle_sum[i] / cycle_count[i]
         pattern.append(series_mean / cycle_mean)
     return pattern
 
+# apply the seasonal patterns to the trend data
 def product_series(series, cycles, trend):
     if not isinstance(cycles, list): 
         cycles = [cycles]
@@ -64,6 +66,7 @@ def product_series(series, cycles, trend):
             base[i] = base[i] / pattern[i % cycle]
     return base
 
+# subtract one series frrom another
 def difference_series(seriesA, seriesB):
     diff = []
     for i in range(len(seriesA)):
