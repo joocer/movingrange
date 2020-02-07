@@ -25,6 +25,8 @@ matches(series, rule)
 ~~~~
 
 ## Dependencies
+- [matplotlib](https://matplotlib.org/)
+- [NumPy](https://www.numpy.org)
 
-- matplotlib
-- numpy
+## License
+[Apache-2.0](LICENSE)
