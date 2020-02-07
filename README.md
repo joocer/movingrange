@@ -2,12 +2,20 @@
 
 A Python library to handle time series data.
 
+### Helper Methods
 ~~~~
-def fillna(series, filler=0):
-def mean(series):
-def standard_deviation(series):
-def variance(series):
-def matches(series, rule):
-def rolling_average(series, window):
-def Henderson(series, n):
+fillna(series, filler=0)
+mean(series)
+standard_deviation(series)
+variance(series)
+matches(series, rule)
 ~~~~
+
+### Seasonal Adjustment
+~~~~
+decompose(series)
+rolling_average(series, period)
+Henderson(series, n)
+~~~~
+
+### Control Chart
