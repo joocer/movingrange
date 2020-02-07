@@ -28,8 +28,8 @@ def variance(series):
 
 # executes a rule against each item in a series and returns matches
 def matches(series, rule):
-    hits = []
-    for item in series:
-        if rule(item):
-            hits.append(item)
-    return hits
+    indices = []
+    for i in range(len(series)):
+        if rule(series[i]):
+            indices.append(i)
+    return indices

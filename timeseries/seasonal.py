@@ -1,5 +1,18 @@
 from .general import *
+from .henderson import *
 
+# split timeseries into trend, season * trend and residual
+def decompose(series):
+    periods = cycle_periods(series)
+    n = max(periods)
+    if n % 2 == 0:
+        n = n + 1
+    trend = Henderson(series, n)
+    seasonal = product_series(series, periods, trend)
+    residual = difference_series(series, seasonal)
+    return decomposed_seasonal_data(series, trend, seasonal, residual)
+
+# unweighted rolling average
 def rolling_average(series, window):
     import math
     roller = []
@@ -11,7 +24,24 @@ def rolling_average(series, window):
         roller.append(math.nan)
     return roller[1:len(series) + 1]
 
-def identify_cycle(series, window):
+# fourier transform to identify frequencies
+def cycle_periods(series):
+    import numpy as np
+    # to remove the DC (usually a 0 peak) subtract the mean of the set from each value
+    readings= []
+    series_mean = mean(series)
+    for i in series:
+        readings.append(i - series_mean)
+    fourierTransform = np.fft.rfft(readings)
+    signal_mean = mean(abs(fourierTransform))
+    sigma = standard_deviation(abs(fourierTransform))    
+    peaks = matches(abs(fourierTransform), lambda t: t > signal_mean + (3 * sigma))
+    # 1 is the sample frequency, it's not meaningful
+    if 1 in peaks:
+        peaks.remove(1)
+    return peaks
+
+def seasonal_pattern(series, window):
     pattern = []
     series_mean = mean(series)
     cycle_sum = [0] * window
@@ -24,22 +54,53 @@ def identify_cycle(series, window):
         pattern.append(series_mean / cycle_mean)
     return pattern
 
-def cyclic_trend(series, window):
-    cycle = identify_cycle(series,window)
-    apogee = max(cycle)
-    series_max = max(series)
-    pattern = []
-    for i in range(len(series)):
-        pattern.append((1 - (cycle[i % window] / apogee)) * series_max)
-    return pattern
+def product_series(series, cycles, trend):
+    if not isinstance(cycles, list): 
+        cycles = [cycles]
+    base = trend.copy()
+    for cycle in cycles:
+        pattern = seasonal_pattern(series,cycle)
+        for i in range(len(series)):
+            base[i] = base[i] / pattern[i % cycle]
+    return base
+
+def difference_series(seriesA, seriesB):
+    diff = []
+    for i in range(len(seriesA)):
+        diff.append(seriesA[i] - seriesB[i])
+    return diff
 
 class decomposed_seasonal_data:
 
-    def __init__(self, source, residual, seasonal, rolling, cycle_size):
+    def __init__(self, source, trend, seasonal, residual):
         self.source = source
-        self.residual = residual
+        self.trend = trend
         self.seasonal = seasonal
-        self.trend = rolling
-        self.cycle_size = cycle_size
+        self.residual = residual
+        self.record = len(self.source)
 
-    # plot()
+    def plot(self):
+        from matplotlib import pyplot as plt
+        plt.figure(figsize=(12, 12))
+
+        # raw
+        ax = plt.subplot(411)
+        plt.ylabel('Source Data')
+        ax.axhline(y=mean(self.source), color='#AAAAAA', linestyle=':')
+        plt.plot(range(self.record), self.source, color='#3333AA')
+        # moving average
+        ax = plt.subplot(412)
+        plt.ylabel('Moving Average')
+        ax.axhline(y=mean(self.trend), color='#AAAAAA', linestyle=':')
+        plt.plot(range(self.record), self.trend, color='#3333AA')
+        # seasonal pattern
+        ax = plt.subplot(413)
+        plt.ylabel('Seasonal')
+        ax.axhline(y=mean(self.seasonal), color='#AAAAAA', linestyle=':')
+        plt.plot(range(self.record), self.seasonal, color='#3333AA')
+        # residual
+        ax = plt.subplot(414)
+        plt.ylabel('Residual')
+        ax.axhline(y=mean(self.residual), color='#AAAAAA', linestyle=':')
+        plt.plot(range(self.record), self.residual, color='#3333AA')
+        ax.axhline(y=0, color='r', linestyle=':')
