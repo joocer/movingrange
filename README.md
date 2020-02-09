@@ -7,11 +7,12 @@ A Python library for the interpretation and treatment of time-series data.
 ## Main Features
 
 ### Seasonal Adjustment
-~~~~
-decompose(series)
-rolling_average(series, period)
-Henderson(series, n)
-~~~~
+
+Decomposing series data into trend, seasonal and residual components.
+
+Rolling Average and Henderson.
+
+Automatic Identification of cycle periods/
 
 ### Control Charts
 
@@ -30,3 +31,6 @@ matches(series, rule)
 
 ## License
 [Apache-2.0](LICENSE)
+
+## Credits
+- Henderson adapted from [Mark Graph's Implementation](https://markthegraph.blogspot.com/2014/06/henderson-moving-average.html) 

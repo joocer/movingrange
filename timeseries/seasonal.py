@@ -88,22 +88,22 @@ class decomposed_seasonal_data:
 
         # raw
         ax = plt.subplot(411)
-        plt.ylabel('Source Data')
+        plt.ylabel('Source')
         ax.axhline(y=mean(self.source), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.source, color='#3333AA')
+        plt.plot(range(self.record), self.source, color='#6666AA')
         # moving average
         ax = plt.subplot(412)
-        plt.ylabel('Moving Average')
+        plt.ylabel('Trend')
         ax.axhline(y=mean(self.trend), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.trend, color='#3333AA')
+        plt.plot(range(self.record), self.trend, color='#6666AA')
         # seasonal pattern
         ax = plt.subplot(413)
         plt.ylabel('Seasonal')
         ax.axhline(y=mean(self.seasonal), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.seasonal, color='#3333AA')
+        plt.plot(range(self.record), self.seasonal, color='#6666AA')
         # residual
         ax = plt.subplot(414)
         plt.ylabel('Residual')
         ax.axhline(y=mean(self.residual), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.residual, color='#3333AA')
-        ax.axhline(y=0, color='r', linestyle=':')
+        plt.plot(range(self.record), self.residual, color='#6666AA')
+        ax.axhline(y=0, color='#AA6666')
