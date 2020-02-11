@@ -2,8 +2,10 @@ from .general import *
 from .henderson import *
 
 # split timeseries into trend, season * trend and residual
-def decompose(series):
-    periods = cycle_periods(series)
+def decompose(series, periods=[]):
+    # if periods aren't set, try to work it out
+    if len(periods) == 0:
+        periods = cycle_periods(series)
     n = max(periods)
     if n % 2 == 0:
         n = n + 1
@@ -25,7 +27,7 @@ def rolling_average(series, window):
     return roller[1:len(series) + 1]
 
 # fourier transform to identify frequencies
-def cycle_periods(series):
+def series_frequencies(series):
     import numpy as np
     # to remove the DC (usually a 0 peak) subtract the mean of the set from each value
     readings= []
@@ -33,14 +35,22 @@ def cycle_periods(series):
     for i in series:
         readings.append(i - series_mean)
     fourierTransform = np.fft.rfft(readings)
-    signal_mean = mean(abs(fourierTransform))
-    sigma = standard_deviation(abs(fourierTransform))    
-    peaks = matches(abs(fourierTransform), lambda t: t > signal_mean + (3 * sigma))
-    # 1 is the sample frequency, it's not meaningful
-    if 1 in peaks:
-        peaks.remove(1)
-    return peaks
+    return fourierTransform
 
+# fourier transform to identify frequencies
+def cycle_periods(series):
+    fourierTransform = abs(series_frequencies(series))
+    signal_mean = mean(fourierTransform)
+    sigma = standard_deviation(fourierTransform)
+    for s in range(10,0,-1):
+        peaks = matches(fourierTransform, lambda t: t > signal_mean + (s * sigma))
+        # 1 is the sample frequency, it's not meaningful
+        if 1 in peaks:
+            peaks.remove(1)
+        if len(peaks) > 0:
+            return peaks
+    raise TypeError('No cycle identified')
+    
 # identify cyclic pattern of series data for period
 def seasonal_pattern(series, period):
     pattern = []

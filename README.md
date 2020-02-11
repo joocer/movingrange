@@ -4,6 +4,8 @@ A Python library for the interpretation and treatment of time-series data.
 
 ## What is it?
 
+A set of methods to process timeseries data.
+
 ## Main Features
 
 ### Seasonal Adjustment
