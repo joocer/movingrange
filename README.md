@@ -30,6 +30,11 @@ timeseries.cycle_periods (series) <- estimate sesonal periods
 cc = timeseries.control_chart(series, samples=8)
 ~~~~
 
+### Predict
+~~~~
+// predict (cycles)
+~~~~
+
 ### Helper Methods
 ~~~~
 timeseries.fillna (series, filler=0)
