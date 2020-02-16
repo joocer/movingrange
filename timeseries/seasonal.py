@@ -1,6 +1,13 @@
 from .general import *
 from .henderson import *
 
+###
+# Trending offer:
+# - Henderson
+# - Rolling Average
+# - Linear Regression
+# - LOESS
+
 # split timeseries into trend, season * trend and residual
 def decompose(series, periods=[]):
     # if periods aren't set, try to work it out
@@ -39,22 +46,23 @@ def series_frequencies(series):
 
 # fourier transform to identify frequencies
 def cycle_periods(series):
-    fourierTransform = abs(series_frequencies(series))
-    signal_mean = mean(fourierTransform)
-    sigma = standard_deviation(fourierTransform)
+    fourierTransform = series_frequencies(series)
+    fourierTransform = fourierTransform[0:len(fourierTransform) // 2]
+    signal_mean = mean(abs(fourierTransform))
+    sigma = standard_deviation(abs(fourierTransform))
     for s in range(10,0,-1):
-        peaks = matches(fourierTransform, lambda t: t > signal_mean + (s * sigma))
-        # 1 is the sample frequency, it's not meaningful
+        peaks = matches(abs(fourierTransform), lambda t: t > signal_mean + (s * sigma))
         if 1 in peaks:
             peaks.remove(1)
         if len(peaks) > 0:
-            return peaks
+            for p in range(len(peaks)):
+                peaks[p] = round(len(series) / peaks[p])
+            return list(set(peaks))
     raise TypeError('No cycle identified')
     
 # identify cyclic pattern of series data for period
 def seasonal_pattern(series, period):
     pattern = []
-    series_mean = mean(series)
     cycle_sum = [0] * period
     cycle_count = [0] * period
     for i in range(len(series)):
@@ -62,7 +70,7 @@ def seasonal_pattern(series, period):
         cycle_count[i % period] = cycle_count[i % period] + 1
     for i in range(period):
         cycle_mean = cycle_sum[i] / cycle_count[i]
-        pattern.append(series_mean / cycle_mean)
+        pattern.append(cycle_mean)
     return pattern
 
 # apply the seasonal patterns to the trend data

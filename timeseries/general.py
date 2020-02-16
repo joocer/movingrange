@@ -11,7 +11,7 @@ def fillna(series, filler=0):
 
 # average of the series
 def mean(series):
-    return sum(series) / len(series)
+    return sum(series) / float(len(series))
 
 # standard deviateion of the series
 def standard_deviation(series):
@@ -20,16 +20,21 @@ def standard_deviation(series):
 # statistal variance of the series
 def variance(series):
     series_mean = mean(series)
-    cumulate = []
-    for i in series:
-        cumulate.append((i - series_mean) ** 2.0)
-    cumulate_mean = mean(cumulate)
-    return cumulate_mean    
+    return sum([(x-series_mean)**2.0 for x in series]) / len(series)
 
-# executes a rule against each item in a series and returns matches
+# executes a rule against each item in a series and returns matches, rule should be a lambe
+# matches(data, lambda x: x > 2)
 def matches(series, rule):
     indices = []
     for i in range(len(series)):
         if rule(series[i]):
             indices.append(i)
     return indices
+
+# applied a function to a series of values, formula should be a lambda
+# f_x(data, lambda x: 3x + 2)
+def f_x(series, formula):
+    r = []
+    for i in range(len(series)):
+        r.append(formula(series[i]))
+    return r
