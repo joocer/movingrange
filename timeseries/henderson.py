@@ -81,7 +81,7 @@ def hmaAsymmetricWeights(m, w):
     return (u)
 
 
-def Henderson(series, n):
+def henderson(series, n):
     """ Calculate an n-term Henderson Moving Average for the Series s
         Note: we blithely assume s is ordered, contiguous and without missing data"""
 

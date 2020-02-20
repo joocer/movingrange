@@ -1,25 +1,20 @@
 from .general import *
-from .henderson import *
+from .linearregression import *
 
-###
-# Trending offer:
-# - Henderson
-# - Rolling Average
-# - Linear Regression
-# - LOESS
+
 
 # split timeseries into trend, season * trend and residual
-def decompose(series, periods=[]):
-    # if periods aren't set, try to work it out
-    if len(periods) == 0:
-        periods = cycle_periods(series)
-    n = max(periods)
-    if n % 2 == 0:
-        n = n + 1
-    trend = Henderson(series, n)
-    seasonal = product_series(series, periods, trend)
-    residual = difference_series(series, seasonal)
-    return decomposed_seasonal_data(series, trend, seasonal, residual)
+def decompose(series, period):
+
+    x = list(range(len(series)))
+    lr = linear_regression(x, series)
+
+    trend = f_x(x, lambda x: x * lr[0] + lr[1])
+    detrend = series_diff(series, trend)
+    seasonal = (seasonal_pattern(detrend, period) * (len(series) // (period - 1)))[0:len(series)]
+    residual = series_diff(detrend,seasonal, 0)
+    
+    return decomposed_seasonal_data(series, trend, detrend, seasonal, residual)
 
 # unweighted rolling average
 def rolling_average(series, window):
@@ -84,44 +79,49 @@ def product_series(series, cycles, trend):
             base[i] = base[i] / pattern[i % cycle]
     return base
 
-# subtract one series frrom another
-def difference_series(seriesA, seriesB):
-    diff = []
-    for i in range(len(seriesA)):
-        diff.append(seriesA[i] - seriesB[i])
-    return diff
-
 class decomposed_seasonal_data:
 
-    def __init__(self, source, trend, seasonal, residual):
+    def __init__(self, source, trend, detrend, seasonal, residual):
         self.source = source
         self.trend = trend
+        self.detrend = detrend
         self.seasonal = seasonal
         self.residual = residual
         self.record = len(self.source)
 
     def plot(self):
         from matplotlib import pyplot as plt
-        plt.figure(figsize=(12, 12))
+        plt.figure(figsize=(20, 12))
+        ax = plt.subplot(111)
 
-        # raw
-        ax = plt.subplot(411)
+        # source
+        ax = plt.subplot(511)
         plt.ylabel('Source')
         ax.axhline(y=mean(self.source), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.source, color='#6666AA')
-        # moving average
-        ax = plt.subplot(412)
-        plt.ylabel('Trend')
+        plt.plot(self.source, color='#6666CC')
+
+        # regression
+        ax = plt.subplot(512)
+        plt.ylabel('Regression')
         ax.axhline(y=mean(self.trend), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.trend, color='#6666AA')
+        plt.plot(self.trend, color='#6666CC')
+
         # seasonal pattern
-        ax = plt.subplot(413)
+        ax = plt.subplot(513)
         plt.ylabel('Seasonal')
         ax.axhline(y=mean(self.seasonal), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.seasonal, color='#6666AA')
-        # residual
-        ax = plt.subplot(414)
+        plt.plot(self.seasonal, color='#6666CC')
+        
+        # detrend
+        ax = plt.subplot(514)
+        plt.ylabel('Detrend')
+        ax.axhline(y=mean(self.detrend), color='#AAAAAA', linestyle=':')
+        plt.plot(self.detrend, color='#6666CC')
+
+        # residual 
+        ax = plt.subplot(515)
         plt.ylabel('Residual')
         ax.axhline(y=mean(self.residual), color='#AAAAAA', linestyle=':')
-        plt.plot(range(self.record), self.residual, color='#6666AA')
-        ax.axhline(y=0, color='#AA6666')
+        plt.plot(self.residual, color='#6666CC')
+
+        from matplotlib import pyplot as plt

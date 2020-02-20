@@ -38,3 +38,13 @@ def f_x(series, formula):
     for i in range(len(series)):
         r.append(formula(series[i]))
     return r
+
+def series_diff(series_a, series_b, adjustment=None):
+    if len(series_a) != len (series_b):
+        raise Exception('series_diff: two series must be the same length')
+    if adjustment == None:
+        adjustment = mean(series_a)
+    series = []
+    for i in range(len(series_a)):
+        series.append(series_a[i] - series_b[i] + adjustment)
+    return series
