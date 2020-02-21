@@ -8,22 +8,29 @@ A set of methods to process timeseries data.
 
 ## Main Features
 
-### Trending
-~~~~
-timeseries.linear_regression (x, y)
-timeseries.Henderson (series, window)
-timeseries.rolling_average (series, window)
-// loess
-~~~~
+Seasonal Decomposition
+-> trend
+-> detrend
+-> seasonal
+-> residual
+-> plot()
 
 ### Seasonal Adjustment
 ~~~~
 timeseries.seasonal_pattern (series, period)
-timeseries.seasonal_pattern (series, [periods])
-
 timeseries.series_frequencies (series)
-timeseries.cycle_periods (series) <- estimate sesonal periods
+timeseries.cycle_periods (series) <- estimate
 ~~~~
+
+### Trending
+~~~~
+timeseries.linear_regression (x, y)
+timeseries.henderson (series, window)
+timeseries.rolling_average (series, window)
+~~~~
+
+Methods for identifying and describing trends in data.
+
 
 ### Control Charts
 ~~~~
