@@ -6,12 +6,15 @@ from .linearregression import *
 # split timeseries into trend, season * trend and residual
 def decompose(series, period):
 
+    if (len(series) < 10):
+        raise Exception('data is too small, mus be at least 10 values')
+
     x = list(range(len(series)))
     lr = linear_regression(x, series)
 
     trend = f_x(x, lambda x: x * lr[0] + lr[1])
     detrend = series_diff(series, trend)
-    seasonal = (seasonal_pattern(detrend, period) * (len(series) // (period - 1)))[0:len(series)]
+    seasonal = (seasonal_pattern(detrend, period) * (((len(detrend) + 1) // (period - 1)) + 1))[0:len(series)]
     residual = series_diff(detrend,seasonal, 0)
     
     return decomposed_seasonal_data(series, trend, detrend, seasonal, residual)

@@ -112,7 +112,7 @@ class controlchart:
 
         # individuals
         ax = plt.subplot(211)
-        plt.plot(self.period_series, self.value_series, marker='o', markersize=3, color='b')
+        plt.plot(self.period_series, self.value_series, marker='o', markersize=2, color='#6666CC')
 
         plt.plot(self.period_series, self.individuals_sigma_line(3), color='r', linestyle='--')
         plt.plot(self.period_series, self.individuals_sigma_line(0), color='g', linestyle='--')
@@ -134,7 +134,7 @@ class controlchart:
         # moving range
         ax = plt.subplot(212)
 
-        plt.plot(self.period_series[:-1], self.mR_series, marker='o', markersize=3, color='b')
+        plt.plot(self.period_series[:-1], self.mR_series, marker='o', markersize=2, color='#6666CC')
         plt.plot(self.period_series, self.moving_range_sigma_line(3), color='r', linestyle='--')
         plt.plot(self.period_series, self.moving_range_sigma_line(0), color='g', linestyle='--')
         plt.plot(self.period_series, self.moving_range_sigma_line(-3), color='r', linestyle='--')
