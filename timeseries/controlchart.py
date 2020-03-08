@@ -130,6 +130,7 @@ class controlchart:
         plt.title("Individuals")  
         plt.xlabel(x_label)
         plt.ylabel(i_label)
+        ax.set_xticks(ax.get_xticks()[::self.baseline_sample_size])
 
         # moving range
         ax = plt.subplot(212)
@@ -151,6 +152,7 @@ class controlchart:
         plt.title("Moving Range")  
         plt.xlabel(x_label)
         plt.ylabel(mr_label)
+        ax.set_xticks(ax.get_xticks()[::self.baseline_sample_size])
 
         # save the plot to a file
         if (len(file) > 0):
