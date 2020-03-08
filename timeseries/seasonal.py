@@ -7,7 +7,7 @@ from .linearregression import *
 def decompose(series, period):
 
     if (len(series) < 10):
-        raise Exception('data is too small, mus be at least 10 values')
+        raise Exception('data is too small, must be at least 10 values')
 
     x = list(range(len(series)))
     lr = linear_regression(x, series)
@@ -20,7 +20,7 @@ def decompose(series, period):
     return decomposed_seasonal_data(series, trend, detrend, seasonal, residual)
 
 # unweighted rolling average
-def rolling_average(series, window):
+def moving_average(series, window):
     import math
     roller = []
     for i in range(math.floor(window / 2) + 1):
@@ -94,6 +94,8 @@ class decomposed_seasonal_data:
 
     def plot(self):
         from matplotlib import pyplot as plt
+        LARGE_FONT = 15
+        plt.rc('font', size=LARGE_FONT)
         plt.figure(figsize=(20, 12))
         ax = plt.subplot(111)
 

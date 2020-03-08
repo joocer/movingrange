@@ -106,8 +106,9 @@ class controlchart:
 
     def plot(self, title="Process Behavior Chart", x_label="Period", i_label="X", mr_label="mR", file='', show_SD = False):        
         from matplotlib import pyplot as plt
-
-        plt.figure(figsize=(12, 12))
+        LARGE_FONT = 15
+        plt.rc('font', size=LARGE_FONT)
+        plt.figure(figsize=(20, 12))
         plt.title("Title")  
 
         # individuals
