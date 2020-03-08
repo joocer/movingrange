@@ -19,7 +19,7 @@ class controlchart:
 
     def load_from_arrays(self, period_series, value_series):
         self.mR_series = []
-        self.period_series = period_series
+        self.period_series = [str(interval) for interval in period_series]
         self.value_series = value_series
         self.segments = self.segment_data()
         for i in range(len(self.value_series) - 1):
