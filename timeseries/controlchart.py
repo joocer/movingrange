@@ -22,9 +22,7 @@ class controlchart:
         self.period_series = [str(interval) for interval in period_series]
         self.value_series = value_series
         self.segments = self.segment_data()
-        for i in range(len(self.value_series) - 1):
-            mR = abs(self.value_series[i] - self.value_series[i + 1])
-            self.mR_series.append(mR)
+        self.mR_series = [abs(self.value_series[i+1]-self.value_series[i]) for i in range(len(self.value_series)-1)]
 
     # when <baseline_sample_size> samples fall the same side of the mean, recalculate the 
     # mean and standard deviations

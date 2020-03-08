@@ -9,9 +9,7 @@ class segment:
         self.end = segment_end
         self.mr = movingrange
         self.value_series = movingrange.value_series[segment_start:segment_end]
-        for i in range(len(self.value_series) - 1):
-            mR = abs(self.value_series[i] - self.value_series[i + 1])
-            self.mR_series.append(mR)
+        self.mR_series = [abs(self.value_series[i+1]-self.value_series[i]) for i in range(len(self.value_series)-1)]
 
     def moving_range_mean(self):
         return mean(self.mR_series[0:self.samples])
