@@ -3,7 +3,7 @@ def fillna(series, filler=0):
     import math
     result = []
     for i in series:
-        if math.isnan(i):
+        if i == None or math.isnan(i):
             result.append(filler)
         else:
             result.append(i)
