@@ -1,6 +1,7 @@
 from .rulesets import *
 from .segment import *
 from .general import *
+import math
 
 class controlchart: 
     # https://en.wikipedia.org/wiki/Shewhart_individuals_control_chart
@@ -21,6 +22,7 @@ class controlchart:
         self.mR_series = []
         self.period_series = [str(interval) for interval in period_series]
         self.value_series = value_series
+        self.value_series = fillna(self.value_series, math.nan)
         self.segments = self.segment_data()
         self.mR_series = [abs(self.value_series[i+1]-self.value_series[i]) for i in range(len(self.value_series)-1)]
 
