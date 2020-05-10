@@ -14,8 +14,6 @@ def mean(series):
     s = series.copy()
     while None in s:
         s.remove(None)
-    while -999 in s:
-        s.remove(-999)
     if (len(s)) == 0:
         return None
     return sum(s) / float(len(s))
