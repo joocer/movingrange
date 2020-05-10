@@ -34,7 +34,10 @@ class segment:
         mr_mean = self.moving_range_mean()
         sigma = self.moving_range_sigma()
         for value in range(len(self.mR_series)):
-            bin = binner((self.mR_series[value] - mr_mean) / sigma)
+            if sigma == 0:
+                bin = 0
+            else:
+                bin = binner((self.value_series[value] - i_mean) / sigma)
             bins.append(bin)
         return bins
 
