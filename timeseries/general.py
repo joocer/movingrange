@@ -11,7 +11,14 @@ def fillna(series, filler=0):
 
 # average of the series
 def mean(series):
-    return sum(series) / float(len(series))
+    s = series.copy()
+    while None in s:
+        s.remove(None)
+    while -999 in s:
+        s.remove(-999)
+    if (len(s)) == 0:
+        return None
+    return sum(s) / float(len(s))
 
 # standard deviateion of the series
 def standard_deviation(series):
