@@ -13,7 +13,7 @@ def fillna(series, filler=0):
 # average of the series
 def mean(series):
     s = series.copy()
-    s = ts.fillna(s, None)
+    s = fillna(s, None)
     while None in s:
         s.remove(None)
     if (len(s)) == 0:
