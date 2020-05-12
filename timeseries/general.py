@@ -1,6 +1,7 @@
+import math
+
 # replaces nan items from a series with a given value
 def fillna(series, filler=0):
-    import math
     result = []
     for i in series:
         if i == None or math.isnan(i):
@@ -14,6 +15,8 @@ def mean(series):
     s = series.copy()
     while None in s:
         s.remove(None)
+    while math.nan in s:
+        s.remove(math.nan)
     if (len(s)) == 0:
         return None
     return sum(s) / float(len(s))
@@ -24,8 +27,15 @@ def standard_deviation(series):
 
 # statistal variance of the series
 def variance(series):
-    series_mean = mean(series)
-    return sum([(x-series_mean)**2.0 for x in series]) / len(series)
+    s = series.copy()
+    while None in s:
+        s.remove(None)
+    while math.nan in s:
+        s.remove(math.nan)
+    if (len(s)) == 0:
+        return None
+    series_mean = mean(s)
+    return sum([(x-series_mean)**2.0 for x in s]) / len(s)
 
 # executes a rule against each item in a series and returns matches, rule should be a lambe
 # matches(data, lambda x: x > 2)
