@@ -109,7 +109,7 @@ class segment:
         description = description + 'Segment Mean = ' + '{:.3f}'.format(i_mean) + '\n'
         description = description + 'Items Above Mean = ' + str(len(matches(bins, lambda t: t > 0))) + '\n'
         description = description + 'Items Below Mean = ' + str(len(matches(bins, lambda t: t < 0))) + '\n'
-        description = description + 'Average Change = ' + '{:.3f}'.format(sum(self.mR_series) / len(self.mR_series)) + '\n'
+        description = description + 'Average Change = ' + '{:.3f}'.format(mean(self.mR_series)) + '\n'
         # longest run of increase
         # longest run of decrease
         description = description + '---------------------------' + '\n'
