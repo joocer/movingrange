@@ -2,6 +2,10 @@
 
 A Python library for the interpretation and treatment of time-series data.
 
+~~~
+pip install va-timeseries
+~~~
+
 ## What is it?
 
 A set of methods to process timeseries data.
