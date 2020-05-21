@@ -5,5 +5,8 @@ data/*.csv
 timeseries/.ipynb_checkpoints/*
 data/.ipynb_checkpoints/*
 .gitignore
-bench/*
+bench/
 *.ipynb
+build/
+dist/
+*.egg-info/

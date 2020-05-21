@@ -10,7 +10,7 @@ def linear_regression(X, Y):
             y_prime.append(Y[i])
             
     mean_x = mean(x_prime)
-    mean_y = mean(x_prime)
+    mean_y = mean(y_prime)
     n = len(x_prime)
     numer = 0
     denom = 0
