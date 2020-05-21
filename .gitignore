@@ -10,3 +10,4 @@ bench/
 build/
 dist/
 *.egg-info/
+$HOME/.pypirc
