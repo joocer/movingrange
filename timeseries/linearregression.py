@@ -18,5 +18,16 @@ def linear_regression(X, Y):
         numer += (x_prime[i] - mean_x) * (y_prime[i] - mean_y)
         denom += (x_prime[i] - mean_x) ** 2.0
     m = numer / denom
-    c = mean_y - (m * mean_x)
-    return m, c
+    b = mean_y - (m * mean_x)
+
+    return m, b
+
+def mean_squares_error(x, y, m, b):
+    elements = []
+
+    for i in range(len(x)):
+        lr_val = m * x[i] + b
+        diff = y[i] - lr_val
+        elements.append(diff * diff)
+        
+    return mean(elements)

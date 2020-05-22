@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
    name='va-timeseries',
-   version='1.0.2',
+   version='1.0.3',
    description='Timeseries Analysis',
    author='Joocer',
    author_email='justin.joyce@joocer.com',
