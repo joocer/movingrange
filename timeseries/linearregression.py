@@ -26,8 +26,9 @@ def mean_squares_error(x, y, m, b):
     elements = []
 
     for i in range(len(x)):
-        lr_val = m * x[i] + b
-        diff = y[i] - lr_val
-        elements.append(diff * diff)
+        if (str(type(x[i])) in num_types) and not math.isnan(x[i]) and (str(type(y[i])) in num_types) and not math.isnan(y[i]):
+            lr_val = m * x[i] + b
+            diff = y[i] - lr_val
+            elements.append(diff * diff)
         
     return mean(elements)
