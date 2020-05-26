@@ -77,7 +77,10 @@ class segment:
         i_mean = self.individuals_mean()
         sigma = self.individuals_sigma()
         for value in range(len(self.value_series)):
-            bin = binner((self.value_series[value] - i_mean) / sigma)
+            if sigma == 0:
+                bin = 0
+            else:
+                bin = binner((self.value_series[value] - i_mean) / sigma)
             bins.append(bin)
         return bins
 

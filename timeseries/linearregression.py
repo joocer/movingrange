@@ -5,7 +5,7 @@ def linear_regression(X, Y):
     y_prime = []
     
     for i in range(len(Y)):
-        if (Y[i] / 1) == (Y[i]):
+        if (str(type(Y[i])) in num_types) and not math.isnan(Y[i]):
             x_prime.append(X[i])
             y_prime.append(Y[i])
             

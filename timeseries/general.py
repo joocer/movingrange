@@ -1,13 +1,15 @@
 import math
 
+num_types = ["<class 'int'>", "<class 'float'>"]
+
 # replaces nan items from a series with a given value
 def fillna(series, filler=0):
     result = []
     for i in series:
-        if i == None or math.isnan(i):
-            result.append(filler)
-        else:
+        if (str(type(i)) in num_types) and not math.isnan(i):
             result.append(i)
+        else:
+            result.append(filler)
     return result
 
 # average of the series
