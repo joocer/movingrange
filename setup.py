@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
    name='va-timeseries',
-   version='1.0.5',
+   version='1.0.7',
    description='Timeseries Analysis',
    long_description=long_description,
    long_description_content_type="text/markdown",
