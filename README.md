@@ -41,11 +41,6 @@ Methods for identifying and describing trends in data.
 cc = timeseries.control_chart(series, samples=8)
 ~~~~
 
-### Predict
-~~~~
-// predict (cycles)
-~~~~
-
 ### Helper Methods
 ~~~~
 timeseries.fillna (series, filler=0)
