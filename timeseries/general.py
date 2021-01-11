@@ -14,29 +14,25 @@ def fillna(series, filler=0):
 
 # average of the series
 def mean(series):
-    s = series.copy()
-    s = fillna(s, None)
-    while None in s:
-        s.remove(None)
-    if (len(s)) == 0:
+    s = [s for s in series if s is not None and not math.isnan(s)]
+    if len(s) == 0:
         return None
     return sum(s) / float(len(s))
 
 # standard deviateion of the series
 def standard_deviation(series):
-    return variance(series) ** (1.0/2.0)
+    var = variance(series)
+    if var is None:
+        return None
+    return variance(series) ** (0.5)
 
 # statistal variance of the series
 def variance(series):
-    s = series.copy()
-    while None in s:
-        s.remove(None)
-    while math.nan in s:
-        s.remove(math.nan)
-    if (len(s)) == 0:
+    s = [s for s in series if s is not None and not math.isnan(s)]
+    if len(s) == 0:
         return None
     series_mean = mean(s)
-    return sum([(x-series_mean)**2.0 for x in s]) / len(s)
+    return sum((x - series_mean) ** 2.0 for x in s) / (len(s) - 1)
 
 # executes a rule against each item in a series and returns matches, rule should be a lambe
 # matches(data, lambda x: x > 2)
